@@ -137,7 +137,7 @@ class OpenSubtitles(object):
         # array DetectLanguage( $token, array($text, $text, ...) )
         raise NotImplementedError
 
-    def download_subtitles(self, ids, override_filenames=None,
+    def download_subtitles_to_file(self, ids, override_filenames=None,
                            output_directory='.', extension='srt'):
         """
         Returns a dictionary with max. 20 IDs of and paths to all
@@ -198,6 +198,29 @@ class OpenSubtitles(object):
                     print(e)
 
         return successful or None
+
+    def download_subtitles(self, id):
+        """
+        Returns a string with decoded subtitles
+        """
+        override_filenames = override_filenames or {}
+        successful = {}
+        ids = []
+        ids.append(id)
+
+        self.data = self.xmlrpc.DownloadSubtitles(self.token, ids)
+        encoded_data = self._get_from_data_or_none('data')
+
+        if not encoded_data:
+            return
+
+        for item in encoded_data:
+            subfile_id = item['idsubtitlefile']
+
+            decoded_data = (decompress(item['data'], 'utf-8')
+                            or decompress(item['data'], 'latin1'))
+
+        return decoded_data
 
     def report_wrong_movie_hash(self,id_sub_movie_file):
         '''Returns true if successfully reported wrong movie hash.
