@@ -203,8 +203,6 @@ class OpenSubtitles(object):
         """
         Returns a string with decoded subtitles
         """
-        override_filenames = override_filenames or {}
-        successful = {}
         ids = []
         ids.append(id)
 
